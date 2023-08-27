@@ -36,7 +36,9 @@ pilot:
   # if protocol sniffing is enabled for inbound
   enableProtocolSniffingForInbound: true
 
-  nodeSelector: {}
+  nodeSelector: # TCN Modified. Default: {}
+    nodegroup: ng-apigw
+
   podAnnotations: {}
   serviceAnnotations: {}
 
