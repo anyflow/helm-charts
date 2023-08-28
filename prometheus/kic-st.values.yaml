@@ -1231,6 +1231,10 @@ prometheus-node-exporter:
   containerSecurityContext:
     allowPrivilegeEscalation: false
 
+  service: # TCN Modified. Default: None
+    port: 9101
+    targetPort: 9101
+
 ## pprometheus-pushgateway sub-chart configurable values
 ## Please see https://github.com/prometheus-community/helm-charts/tree/main/charts/prometheus-pushgateway
 ##
