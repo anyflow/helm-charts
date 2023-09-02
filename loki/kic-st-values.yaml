@@ -1,0 +1,101 @@
+# Configuration for the loki pod(s)
+loki:
+  # -- Check https://grafana.com/docs/loki/latest/configuration/#common_config for more info on how to provide a common configuration
+  commonConfig:
+    replication_factor: 1
+  # -- Storage config. Providing this will automatically populate all necessary storage configs in the templated config.
+  storage:
+    type: 'filesystem'
+
+  auth_enabled: false
+
+# Configuration for the single binary node(s)
+singleBinary:
+  replicas: 1
+  # -- Node selector for single binary pods
+  nodeSelector: {}
+
+  persistence:
+    # -- Enable persistent disk
+    enabled: true
+    # -- Size of persistent disk
+    size: 50Gi
+    # -- Storage class to be used.
+    # If defined, storageClassName: <storageClass>.
+    # If set to "-", storageClassName: "", which disables dynamic provisioning.
+    # If empty or set to null, no storageClassName spec is
+    # set, choosing the default provisioner (gp2 on AWS, standard on GKE, AWS, and OpenStack).
+    storageClass: "efs-sc"
+
+# Configuration for the memberlist service
+memberlist:
+  service:
+    publishNotReadyAddresses: true
+
+test:
+  enabled: false
+
+monitoring:
+  # Dashboards for monitoring Loki
+  dashboards:
+    # -- If enabled, create configmap with dashboards for monitoring Loki
+    enabled: false
+  # Recording rules for monitoring Loki, required for some dashboards
+  rules:
+    # -- If enabled, create PrometheusRule resource with Loki recording rules
+    enabled: true
+  # ServiceMonitor configuration
+  serviceMonitor:
+    # -- If enabled, ServiceMonitor resources for Prometheus Operator are created
+    enabled: false
+  # Self monitoring determines whether Loki should scrape its own logs.
+  # This feature currently relies on the Grafana Agent Operator being installed,
+  # which is installed by default using the grafana-agent-operator sub-chart.
+  # It will create custom resources for GrafanaAgent, LogsInstance, and PodLogs to configure
+  # scrape configs to scrape its own logs with the labels expected by the included dashboards.
+  selfMonitoring:
+    enabled: false
+  # Grafana Agent configuration
+  grafanaAgent:
+    # -- Controls whether to install the Grafana Agent Operator and its CRDs.
+    # Note that helm will not install CRDs if this flag is enabled during an upgrade.
+    # In that case install the CRDs manually from https://github.com/grafana/agent/tree/main/production/operator/crds
+    installOperator: false
+  # The Loki canary pushes logs to and queries from this loki installation to test
+  # that it's working correctly
+  lokiCanary:
+    enabled: false
+
+
+# Configuration for the write pod(s)
+write:
+  replicas: 1
+  # -- Node selector for write pods
+  nodeSelector:
+    nodegroup: ng-cluster
+
+# Configuration for the table-manager
+tableManager:
+  # -- Node selector for table-manager pods
+  nodeSelector:
+    nodegroup: ng-cluster
+
+# Configuration for the read pod(s)
+read:
+  replicas: 1
+  # -- Node selector for read pods
+  nodeSelector:
+    nodegroup: ng-cluster
+
+# Configuration for the backend pod(s)
+backend:
+  replicas: 1
+  # -- Node selector for backend pods
+  nodeSelector:
+    nodegroup: ng-cluster
+
+# Configuration for the gateway
+gateway:
+  # -- Node selector for gateway pods
+  nodeSelector:
+    nodegroup: ng-cluster
