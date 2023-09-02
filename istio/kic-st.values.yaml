@@ -37,7 +37,7 @@ pilot:
   enableProtocolSniffingForInbound: true
 
   nodeSelector: # TCN Modified. Default: {}
-    nodegroup: ng-apigw
+    nodegroup: ng-cluster
 
   podAnnotations: {}
   serviceAnnotations: {}
@@ -191,7 +191,7 @@ meshConfig:
 
 global:
   # Used to locate istiod.
-  istioNamespace: ns-cluster # TCN Modified. Default: istio-system
+  istioNamespace: ns-observability # TCN Modified. Default: istio-system
   # List of cert-signers to allow "approve" action in the istio cluster role
   #
   # certSigners:

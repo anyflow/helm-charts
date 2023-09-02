@@ -13,22 +13,19 @@ kind: Application
 metadata:
   name: kic-st-prometheus
 spec:
-	project: cluster
-	source:
-		repoURL: 'https://prometheus-community.github.io/helm-charts'
-		targetRevision: 23.4.0
-		chart: prometheus
-	destination:
-		namespace: ns-cluster
-		name: kic-st-cluster
-	sources:
-		- repoURL: 'https://prometheus-community.github.io/helm-charts'
-			targetRevision: 23.4.0
-			helm:
-				valueFiles:
-					- $values/prometheus/kic-st.values.yaml
-			chart: prometheus
-		- repoURL: 'http://gitea.lgthinq.com/cluster/helm-charts.git'
-			targetRevision: main
-			ref: values
+  project: cluster
+  source:
+    repoURL: 'https://prometheus-community.github.io/helm-charts'
+    targetRevision: 23.4.0
+    chart: prometheus
+  destination:
+    namespace: ns-observability
+    name: kic-st-cluster
+  sources:
+    - repoURL: 'https://prometheus-community.github.io/helm-charts'
+      targetRevision: 23.4.0
+      chart: prometheus
+    - repoURL: 'http://gitea.lgthinq.com/cluster/helm-charts.git'
+      targetRevision: main
+      ref: values
 ```

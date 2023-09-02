@@ -19,7 +19,7 @@ spec:
       targetRevision: 1.18.2
       chart: istiod
     destination:
-      namespace: ns-cluster
+      namespace: ns-observability
       name: kic-st-cluster
     sources:
       - repoURL: 'https://istio-release.storage.googleapis.com/charts'

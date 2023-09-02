@@ -15,13 +15,13 @@ pilot:
 
   # Can be a full hub/image:tag
   image: pilot
-  traceSampling: 0.1 # TCN Modified. Default: 1.0
+  traceSampling: 1.0 # TCN Modified. Default: 1.0
 
   # Resources for a small pilot install
   resources:
     requests:
-      cpu: 1000m # TCN Modified. Default: 500m
-      memory: 2048Mi
+      cpu: 250m # TCN Modified. Default: 500m
+      memory: 256Mi # TCN Modified. Default: 2048Mi
 
   # Set to `type: RuntimeDefault` to use the default profile if available.
   seccompProfile: {}
@@ -36,8 +36,7 @@ pilot:
   # if protocol sniffing is enabled for inbound
   enableProtocolSniffingForInbound: true
 
-  nodeSelector: # TCN Modified. Default: {}
-    nodegroup: ng-cluster
+  nodeSelector: {}
 
   podAnnotations: {}
   serviceAnnotations: {}
@@ -335,10 +334,10 @@ global:
     # Resources for the sidecar.
     resources:
       requests:
-        cpu: 350m # TCN Modified. Default: 100m
+        cpu: 250m # TCN Modified. Default: 100m
         memory: 64Mi # TCN Modified. Default : 128Mi
       limits:
-        cpu: 350m # TCN Modified. Default: 2000m
+        cpu: 250m # TCN Modified. Default: 2000m
         memory: 64Mi # TCN Modified. Default: 1024Mi
 
     # Default port for Pilot agent health checks. A value of 0 will disable health checking.

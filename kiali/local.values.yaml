@@ -23,7 +23,7 @@ istio_namespace: ns-observability # default is where Kiali is installed
 auth:
   openid: {}
   openshift: {}
-  strategy: ""
+  strategy: "anonymous"
 
 deployment:
   # This only limits what Kiali will attempt to see, but Kiali Service Account has permissions to see everything.
@@ -45,7 +45,7 @@ deployment:
   image_name: quay.io/kiali/kiali
   image_pull_policy: "Always"
   image_pull_secrets: []
-  image_version: v1.72.0 # version like "v1.39" (see: https://quay.io/repository/kiali/kiali?tab=tags) or a digest hash
+  image_version: v1.73.0 # version like "v1.39" (see: https://quay.io/repository/kiali/kiali?tab=tags) or a digest hash
   ingress:
     additional_labels: {}
     class_name: "nginx"
@@ -59,8 +59,7 @@ deployment:
     time_field_format: "2006-01-02T15:04:05Z07:00"
     sampler_rate: "1"
 
-  nodeSelector: # TCN Modified. Default: {}
-    nodegroup: ng-cluster
+  nodeSelector: {}
 
   pod_annotations: {}
   pod_labels: {}
@@ -75,9 +74,9 @@ deployment:
   secret_name: "kiali"
   security_context: {}
   service_annotations: {}
-  service_type: "LoadBalancer"
+  service_type: "NodePort"
   tolerations: []
-  version_label: v1.72.0 # v1.39 # v1.39.0 # see: https://quay.io/repository/kiali/kiali?tab=tags
+  version_label: v1.73.0 # v1.39 # v1.39.0 # see: https://quay.io/repository/kiali/kiali?tab=tags
   view_only_mode: false
 
 external_services:
@@ -110,7 +109,7 @@ login_token:
   signing_key: ""
 
 server:
-  port: 20001
+  port: 31000
   metrics_enabled: false
   metrics_port: 9090
   web_root: ""

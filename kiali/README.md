@@ -19,7 +19,7 @@ spec:
    targetRevision: 1.72.0
    chart: kiali-server
  destination:
-   namespace: ns-cluster
+   namespace: ns-observability
    name: kic-st-cluster
  sources:
    - repoURL: 'https://kiali.org/helm-charts'
