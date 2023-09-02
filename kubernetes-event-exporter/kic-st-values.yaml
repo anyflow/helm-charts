@@ -1,0 +1,100 @@
+replicaCount: 1
+
+image:
+  ## @param image.registry Container image registry
+  ## @param image.repository Container image name
+  ## @param image.tag Container image tag
+  ## @param image.digest Container image digest in the way sha256:aa.... Please note this parameter, if set, will override the tag
+  ## @param image.pullPolicy Container image pull policy
+  ## @param image.pullSecrets Specify docker-registry secret names as an array
+  ##
+  registry: ghcr.io
+  repository: resmoio/kubernetes-event-exporter
+  tag: v1.4
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+service:
+  type: ClusterIP
+  port: 2112
+
+## Override the deployment namespace
+namespaceOverride: "ns-observability"
+
+## Kubernetes event exporter configuration, rendered as a template
+## ref: https://github.com/resmoio/kubernetes-event-exporter#configuration
+## @param config.logLevel Verbosity of the logs (options: `fatal`, `error`, `warn`, `info` or `debug`)
+## @param config.logFormat How the logs are formatted. Allowed values: `pretty` or `json`
+## @param config.receivers [array] Array containing event receivers
+## @param config.route.routes [array] Array containing event route configuration
+##
+config:
+  logLevel: debug
+  logFormat: json
+  maxEventAgeSeconds: 60
+  kubeQPS: 100
+  kubeBurst: 500
+  route:
+    routes:
+      - match:
+#          - receiver: "dump"
+          - receiver: "loki-webhook"
+          - receiver: "loki"
+      - drop:
+          - namespace: "ns-observability"
+    receivers:
+#      - name: "dump"
+#        stdout: {}
+      - name: "loki-webhook"
+        webhook:
+          endpoint: http://tcn-loki.ns-observability.svc.cluster.local:3100/loki/api/v1/push
+          headers:
+            Content-Type: application/json
+            User-Agent: "kube-event-exporter"
+          layout:
+            streams:
+              - stream:
+                  app: kube-api
+                  source: event-exporter
+                  severity: "{{ .Type }}"
+                  reason: "{{ .Reason }}"
+                  name: "{{ .InvolvedObject.Name }}"
+                  namespace: "{{ .InvolvedObject.Namespace }}"
+                  kind: "{{ .InvolvedObject.Kind }}"
+                  host: "{{ .Source.Host }}"
+                  component: "{{ .Source.Component }}"
+                values:
+                  - - "{{ mul .GetTimestampMs 1000000 }}"
+                    - "severity={{ .Type }} namespace={{ .InvolvedObject.Namespace }} object={{ .InvolvedObject.Kind }}/{{ .InvolvedObject.Name }} reason={{ .Reason }} message={{ .Message }}"
+      - name: "loki"
+        loki:
+          streamLabels:
+            app: kube-event-exporter
+          url: http://tcn-loki.ns-observability.svc.cluster.local:3100/loki/api/v1/push
+
+
+rbac:
+  # If true, create & use RBAC resources
+  create: true
+
+resources:
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+nodeSelector:
+  nodegroup: ng-cluster
