@@ -48,10 +48,23 @@ deployment:
   image_version: v1.72.0 # version like "v1.39" (see: https://quay.io/repository/kiali/kiali?tab=tags) or a digest hash
   ingress:
     additional_labels: {}
-    class_name: "nginx"
+    class_name: "alb" # TCN modified. Default: "nginx"
     #enabled:
     override_yaml:
-      metadata: {}
+      metadata:
+        annotations: # TCN modified. Default: None
+          kubernetes.io/ingress.class: alb
+          alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-northeast-2:567925872059:certificate/b7a479b7-8e63-4e40-927b-fe918692a4a4
+          alb.ingress.kubernetes.io/security-groups: sg-01cd8d738b8b2f506
+          alb.ingress.kubernetes.io/subnets: subnet-123d1c7a,subnet-61fb6f2d
+          alb.ingress.kubernetes.io/group.name: ingress-common-ialb
+          alb.ingress.kubernetes.io/healthcheck-path: /health
+          alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80},{"HTTPS":443}]'
+          alb.ingress.kubernetes.io/scheme: internal
+          alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-TLS13-1-2-2021-06
+          alb.ingress.kubernetes.io/ssl-redirect: "443"
+          alb.ingress.kubernetes.io/success-codes: "200"
+          alb.ingress.kubernetes.io/target-type: instance
   instance_name: "kiali"
   logger:
     log_format: "text"
@@ -75,7 +88,7 @@ deployment:
   secret_name: "kiali"
   security_context: {}
   service_annotations: {}
-  service_type: "LoadBalancer"
+  service_type: "NodePort" # TCN modified. Default: "ClusterIP"
   tolerations: []
   version_label: v1.72.0 # v1.39 # v1.39.0 # see: https://quay.io/repository/kiali/kiali?tab=tags
   view_only_mode: false
@@ -114,3 +127,4 @@ server:
   metrics_enabled: false
   metrics_port: 9090
   web_root: ""
+  web_fqdn: "kic-st-kiali.lgthinq.com" # TCN modified. Default: ""
